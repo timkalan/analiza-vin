@@ -1,3 +1,5 @@
+# skripta je vzeta iz gradiv s predavanj
+
 import csv
 import json
 import os

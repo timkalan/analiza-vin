@@ -1,6 +1,6 @@
 # Analiza vin
 
-V sklopu predmeta Programiranje 1 bom analiziral 2507 vin, podatki o njih so zajeti s strani[Wine Library](https://winelibrary.com/search?search=&sort_by=rating-desc).
+V sklopu predmeta Programiranje 1 bom analiziral 2440 vin, podatki o njih so zajeti s strani[Wine Library](https://winelibrary.com/search?page=1&search=).
 
 Za vsako vino bom zajel:
 * ime vina
@@ -25,7 +25,6 @@ Za vsako vino bom zajel:
 Delovne hipoteze in vprašanja:
 * Najboljša vina so daleč od najbolj popularnih
 * 750ml je najbolj popularna in najbolje ocenjena velikost buteljke
-
 * Katero leto je bilo najboljše za vino?
 * Katera država je "najboljša", kar se tiče vin?
 * Katera je najbolj popularna sorta?
