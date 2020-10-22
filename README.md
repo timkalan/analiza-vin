@@ -1,6 +1,6 @@
 # Analiza vin
 
-V sklopu predmeta Programiranje 1 bom analiziral 2440 vin, podatki o njih so zajeti s strani[Wine Library](https://winelibrary.com/search?page=1&search=).
+V sklopu predmeta Programiranje 1 bom analiziral 2467 vin, podatki o njih so zajeti s strani [Wine Library](https://winelibrary.com/search?page=1&search=). Število vin se rahlo spreminja, jaz bom delal s stranjo, zajeto 22.10.2020 ob 14:00
 
 Za vsako vino bom zajel:
 * ime vina
