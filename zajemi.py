@@ -21,8 +21,6 @@ def zajemi_glavne(st_strani=99):
             vino_url_vzorec, orodja.vsebina_datoteke(
                 f'zajete_strani/vina/vina{i * 25 + 1}-{(i+1) * 25}.html'))
 
-        print(len(vina_url))
-    print(vina_url[0])
     return vina_url
 
 
@@ -100,7 +98,7 @@ def izloci_podatke_vina(oglas):
 
         if ocena:
             vino['ocena'] = int(ocena['ocena'])
-            vino['ocenjevaletc'] = ocena['ocenjevalec']
+            vino['ocenjevalec'] = ocena['ocenjevalec']
         else:
             vino['ocena'] = None
             vino['ocenjevalec'] = None
@@ -110,11 +108,12 @@ def izloci_podatke_vina(oglas):
 
 
 vzorec_detajlov = re.compile(
+    r'<meta property="og:url" content="https://winelibrary.com/wines.*?'
     r'<input type="hidden" name="product_id" value="(?P<id>\d{3,8})" />.*?'
     r"""Region.*?class="data"><a href=".*?">(?P<regija>.*?)</a></td>.*?"""
     r"""Sub-Region.*?class="data"><a href=".*?">(?P<podregija>.*?)</a></td>.*?"""
     r"""Color.*?class="data"><a href=".*?">(?P<barva>.*?)</a></td>.*?"""
-    r"""ABV.*?class="data">(?P<alkohol>.*?)%</td>.*?"""
+    r"""ABV.*?class="data">(?P<alkohol>.*?)%?</td>.*?"""
     #r"""Varietal(s).*?class="data"><a href=".*?">(?P<varietal>.*?)</a>.*?""",
     r"""Closure.*?class="data">(?P<zamasek>.*?)</td>.*?""",
     flags=re.DOTALL
@@ -122,13 +121,13 @@ vzorec_detajlov = re.compile(
 
 
 vzorec_recenzije = re.compile(
-    r"""<p itemprop='reviewBody'>"(?P<recenzija>.*?)"</p>""",
+    r"""<p itemprop='reviewBody'>"?(?P<recenzija>.*?)"?</p>""",
     flags=re.DOTALL
 )
 
 
 vzorec_opisa = re.compile(
-    r"<p itemprop='description'>(?P<opis>.*?)</p>",
+    r"""<p itemprop='description'>"?(?P<opis>.*?)"?</p>""",
     flags=re.DOTALL
 )
 
@@ -137,22 +136,27 @@ def izloci_detajle(stran):
     """
     Izloči vse relevantne podatke iz dejanske strani posameznega vina.
     """
-    detajli = re.search(vzorec_detajlov, stran).groupdict()
-    recenzija = re.search(vzorec_recenzije, stran)
-    opis = re.search(vzorec_opisa, stran)
+    detajli = re.search(vzorec_detajlov, stran)
+    if detajli:
+        detajli = detajli.groupdict()
+        recenzija = re.search(vzorec_recenzije, stran)
+        opis = re.search(vzorec_opisa, stran)
 
-    detajli['id'] = int(detajli['id'])
-    detajli['alkohol'] = float(detajli['alkohol'])
+        detajli['id'] = int(detajli['id'])
+        if detajli['alkohol'] == 'N/A':
+            detajli['alkohol'] = None
+        else:
+            detajli['alkohol'] = float(detajli['alkohol'])
 
-    if opis:
-        detajli['opis'] = opis['opis'].replace('\n<br>\n<br>\n', ' ').replace('<br><br>\n\n', ' ')
-    else:
-        detajli['opis'] = None
+        if opis:
+            detajli['opis'] = opis['opis'].replace('\n<br>\n<br>\n', ' ').replace('<br><br>\n\n', ' ')
+        else:
+            detajli['opis'] = None
 
-    if recenzija:
-        detajli['recenzija'] = recenzija['recenzija']
-    else:
-        detajli['recenzija'] = None
+        if recenzija:
+            detajli['recenzija'] = recenzija['recenzija']
+        else:
+            detajli['recenzija'] = None
 
     return detajli
 
@@ -160,14 +164,14 @@ def izloci_detajle(stran):
 
 vzorec_okusov = re.compile(
     r'<input type="hidden" name="product_id" value="(?P<id>\d{3,8})" />.*?'
-    r'Taste.*?class="data">(?P<okusi>.*?)</td>',
+    r'Taste.*?class="data">(?P<okus>.*?)</td>',
     flags=re.DOTALL
 )
 
 
 vzorec_vonjav = re.compile(
     r'<input type="hidden" name="product_id" value="(?P<id>\d{3,8})" />.*?'
-    r'Nose.*?class="data">(?P<vonjave>.*?)</td>',
+    r'Nose.*?class="data">(?P<vonj>.*?)</td>',
     flags=re.DOTALL
 )
 
@@ -179,59 +183,74 @@ def izloci_iz_seznama(vzorec, stran):
     id: kvalifikator 
     """
     if vzorec == vzorec_okusov:
-        kljuc = 'okusi'
+        kljuc = 'okus'
     else:
-        kljuc = 'vonjave'
+        kljuc = 'vonj'
     
-    kvalifikatorji = re.search(vzorec, stran).groupdict()
-    kvalifikatorji['id'] = int(kvalifikatorji['id'])
-    kvalifikatorji[kljuc] = kvalifikatorji[kljuc].replace(' and', ',')
-    seznam = []
-    for kvallifikator in kvalifikatorji[kljuc].replace(',', '').split():
-        seznam.append(
-            {
-                kvalifikatorji['id']: kvallifikator
-            }
-        )
-    return seznam
+    kvalifikatorji = re.search(vzorec, stran)
+    if kvalifikatorji:
+        kvalifikatorji = kvalifikatorji.groupdict()
+        kvalifikatorji['id'] = int(kvalifikatorji['id'])
+        kvalifikatorji[kljuc] = kvalifikatorji[kljuc].replace(' and', ',')
+        seznam = []
+        for kvalifikator in kvalifikatorji[kljuc].replace(',', '').split():
+            seznam.append(
+                {
+                    'id':kvalifikatorji['id'],
+                    kljuc: kvalifikator
+                }
+            )
+        return seznam
 
-
-
-
-def shrani_in_preglej_oglas():
-    pass
-
-
-def shrani_in_preglej_vina():
-    pass
 
 
 
 if __name__ == '__main__':
-    #zajemi_glavne()                     # shranimo glavne strani
-    #zajemi_posamezna(zajemi_glavne())   # shranimo posamezne strani
+    zajemi_glavne()                     # shranimo glavne strani
+    zajemi_posamezna(zajemi_glavne())   # shranimo posamezne strani
 
-    #slovarji_vin = []
-    #for vina in os.listdir('zajete_strani/vina'):
-    #    for oglas in re.finditer(vzorec_oglasa, orodja.vsebina_datoteke(f'zajete_strani/vina/{vina}')):
-    #        slovarji_vin.append(izloci_podatke_vina(oglas.group(0)))
+    # naredimo slovar iz glavnih strani
+    slovarji_vin = []
+    for vina in os.listdir('zajete_strani/vina'):
+        for oglas in re.finditer(vzorec_oglasa, orodja.vsebina_datoteke(f'zajete_strani/vina/{vina}')):
+            if izloci_podatke_vina(oglas.group(0)):
+                slovarji_vin.append(izloci_podatke_vina(oglas.group(0)))
 
+    # slovarji zi podstrani
     slovarji_detajlov = []
+    slovarji_okusov = []
+    slovarji_vonjav = []
+    # upoštevamo, da so datoteke v večih direktorijih
     for direktorij in os.listdir('zajete_strani/oglasi'):
         for oglas in os.listdir(f'zajete_strani/oglasi/{direktorij}'):
-            print(izloci_detajle(orodja.vsebina_datoteke(f'zajete_strani/oglasi/{direktorij}/{oglas}')))
-            slovarji_detajlov.append(izloci_detajle(orodja.vsebina_datoteke(f'zajete_strani/oglasi/{direktorij}/{oglas}')))
-            break
-        break
+            detajli = izloci_detajle(
+                orodja.vsebina_datoteke(f'zajete_strani/oglasi/{direktorij}/{oglas}'))
+
+            if detajli:
+                detajli['popularnost'] = re.sub('[^0-9]', '', oglas)        # isluščimo zaporedno številko
+                slovarji_detajlov.append(detajli)  
+
+            okusi = izloci_iz_seznama(
+                vzorec_okusov, orodja.vsebina_datoteke(f'zajete_strani/oglasi/{direktorij}/{oglas}'))
+            vonjave = izloci_iz_seznama(
+                vzorec_vonjav, orodja.vsebina_datoteke(f'zajete_strani/oglasi/{direktorij}/{oglas}'))
+
+            if okusi:
+                slovarji_okusov += okusi
+            if vonjave:
+                slovarji_vonjav += vonjave
+
+    
+    #zapišemo CSV-je
+    #orodja.zapisi_csv(slovarji_vin, slovarji_vin[0].keys(), 'obdealni_podatki/vina.csv')
+    #orodja.zapisi_csv(
+    #    slovarji_detajlov, 
+    #    ['id', 'regija', 'podregija', 'barva', 'alkohol', 'zamasek', 'opis', 'recenzija', 'popularnost'], 
+    #    'obdealni_podatki/detajli.csv')
+    orodja.zapisi_csv(slovarji_okusov, ['id', 'okus'], 'obdealni_podatki/okusi.csv')
+    orodja.zapisi_csv(slovarji_vonjav, ['id', 'vonj'], 'obdealni_podatki/vonjave.csv')
 
 
-
-
-#for oglas in re.finditer(vzorec_oglasa, orodja.vsebina_datoteke('zajete_strani/vina/vina1-25.html')):
-#    print(izloci_podatke_vina(oglas.group(0)))
-
-
-#print(izloci_iz_seznama(vzorec_vonjav, orodja.vsebina_datoteke('zajete_strani/oglasi/01/oglas5.html')))
 
 
 
