@@ -1,6 +1,8 @@
 # Analiza vin
 
-V sklopu predmeta Programiranje 1 bom analiziral 2467 vin, podatki o njih so zajeti s strani [Wine Library](https://winelibrary.com/search?page=1&search=). Število vin se rahlo spreminja, jaz bom delal s stranjo, zajeto 22.10.2020 ob 14:00
+V sklopu predmeta Programiranje 1 bom analiziral 2467 vin, podatki o njih so zajeti s strani 
+[Wine Library](https://winelibrary.com/search?page=1&search=). Število vin se rahlo spreminja, 
+jaz bom delal s stranjo, zajeto 22.10.2020 ob 14:00
 
 Za vsako vino bom zajel:
 * ime vina
@@ -12,8 +14,6 @@ Za vsako vino bom zajel:
 * položaj na lestvici popularnosti
 * ocena profesionalca
 * cena (in popust)
-
-Če bo šlo, bom dodatno zajel še (podatki se namreč nahajajo direktno na strani posameznega vina in ne na seznamu vseh):
 * opis
 * kratka recenzija
 * regija in podregija
@@ -28,9 +28,8 @@ Delovne hipoteze in vprašanja:
 * Katero leto je bilo najboljše za vino?
 * Katera država je "najboljša", kar se tiče vin?
 * Katera je najbolj popularna sorta?
-
-Pogojna vprašanja:
 * Katere so najboljše regije?
 * Kateri okusi in vonjave so najbolj priljubljeni?
+* Ljudje preferirajo belo vino
 
 
