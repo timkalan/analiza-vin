@@ -147,16 +147,21 @@ def izloci_detajle(stran):
             detajli['alkohol'] = None
         else:
             detajli['alkohol'] = float(detajli['alkohol'])
+        if detajli['zamasek'] == 'N/A':
+            detajli['zamasek'] = None
 
         if opis:
-            detajli['opis'] = opis['opis'].replace('\n<br>\n<br>\n', ' ').replace('<br><br>\n\n', ' ')
+            detajli['opis'] = opis['opis'].replace(
+                '\n<br>\n<br>\n', ' ').replace(
+                    '<br><br>\n\n', ' ').replace('\n<BR><BR>\n', ' ')
         else:
             detajli['opis'] = None
 
-        if recenzija:
-            detajli['recenzija'] = recenzija['recenzija']
-        else:
-            detajli['recenzija'] = None
+        #if recenzija:
+        #    detajli['recenzija'] = recenzija['recenzija'].replace(
+        #        '\n<br>\n', ' ').replace('\n', ' ')
+        #else:
+        #    detajli['recenzija'] = None
 
     return detajli
 
@@ -241,12 +246,12 @@ if __name__ == '__main__':
                 slovarji_vonjav += vonjave
 
     
-    #zapišemo CSV-je
-    #orodja.zapisi_csv(slovarji_vin, slovarji_vin[0].keys(), 'obdealni_podatki/vina.csv')
-    #orodja.zapisi_csv(
-    #    slovarji_detajlov, 
-    #    ['id', 'regija', 'podregija', 'barva', 'alkohol', 'zamasek', 'opis', 'recenzija', 'popularnost'], 
-    #    'obdealni_podatki/detajli.csv')
+    # zapišemo CSV-je
+    orodja.zapisi_csv(slovarji_vin, slovarji_vin[0].keys(), 'obdealni_podatki/vina.csv')
+    orodja.zapisi_csv(
+        slovarji_detajlov, 
+        ['id', 'regija', 'podregija', 'barva', 'alkohol', 'zamasek', 'opis', 'popularnost'], 
+        'obdealni_podatki/detajli.csv')
     orodja.zapisi_csv(slovarji_okusov, ['id', 'okus'], 'obdealni_podatki/okusi.csv')
     orodja.zapisi_csv(slovarji_vonjav, ['id', 'vonj'], 'obdealni_podatki/vonjave.csv')
 
