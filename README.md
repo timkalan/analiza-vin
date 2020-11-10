@@ -33,3 +33,11 @@ Delovne hipoteze in vprašanja:
 * Ljudje preferirajo belo vino
 
 
+## Podatki
+Podatki so urejeni v štiri `.csv` datoteke, ki jih dobimo, ko poženemo `zajemi.py`:
+* `vina.csv` vsebuje stolpce: id, leto, ime, sorta, drzava, velikost, znizana_cena, 
+    cena, ocena, ocenjevalec
+* `detajli.csv` vsebuje stolpce: id, regija, podregija, barva, alkohol, zamasek, 
+    opis, recenzija, popularnost 
+* `okusi.csv` vsebuje stolpca: id, okus
+* `vonjave.csv` vsebuje stolpca: id, vonj
