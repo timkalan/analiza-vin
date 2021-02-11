@@ -173,14 +173,14 @@ def izloci_detajle(stran):
 
 vzorec_okusov = re.compile(
     r'<input type="hidden" name="product_id" value="(?P<id>\d{3,8})" />.*?'
-    r'Taste.*?class="data">(?P<okus>.*?)</td>',
+    r'Taste</td>.*?class="data">(?P<okus>.*?)</td>',
     flags=re.DOTALL
 )
 
 
 vzorec_vonjav = re.compile(
     r'<input type="hidden" name="product_id" value="(?P<id>\d{3,8})" />.*?'
-    r'Nose.*?class="data">(?P<vonj>.*?)</td>',
+    r'Nose</td>.*?class="data">(?P<vonj>.*?)</td>',
     flags=re.DOTALL
 )
 
@@ -231,33 +231,34 @@ if __name__ == '__main__':
     slovarji_vonjav = []
     # upoštevamo, da so datoteke v večih direktorijih
     for direktorij in os.listdir('zajete_strani/oglasi'):
-        for oglas in os.listdir(f'zajete_strani/oglasi/{direktorij}'):
-            detajli = izloci_detajle(
-                orodja.vsebina_datoteke(f'zajete_strani/oglasi/{direktorij}/{oglas}'))
+        if direktorij != '.DS_Store':
+            for oglas in os.listdir(f'zajete_strani/oglasi/{direktorij}'):
+                detajli = izloci_detajle(
+                    orodja.vsebina_datoteke(f'zajete_strani/oglasi/{direktorij}/{oglas}'))
 
-            if detajli:
-                detajli['popularnost'] = re.sub('[^0-9]', '', oglas)        # isluščimo zaporedno številko
-                slovarji_detajlov.append(detajli)  
+                if detajli:
+                    detajli['popularnost'] = re.sub('[^0-9]', '', oglas)        # isluščimo zaporedno številko
+                    slovarji_detajlov.append(detajli)  
 
-            okusi = izloci_iz_seznama(
-                vzorec_okusov, orodja.vsebina_datoteke(f'zajete_strani/oglasi/{direktorij}/{oglas}'))
-            vonjave = izloci_iz_seznama(
-                vzorec_vonjav, orodja.vsebina_datoteke(f'zajete_strani/oglasi/{direktorij}/{oglas}'))
+                okusi = izloci_iz_seznama(
+                    vzorec_okusov, orodja.vsebina_datoteke(f'zajete_strani/oglasi/{direktorij}/{oglas}'))
+                vonjave = izloci_iz_seznama(
+                    vzorec_vonjav, orodja.vsebina_datoteke(f'zajete_strani/oglasi/{direktorij}/{oglas}'))
 
-            if okusi:
-                slovarji_okusov += okusi
-            if vonjave:
-                slovarji_vonjav += vonjave
+                if okusi:
+                    slovarji_okusov += okusi
+                if vonjave:
+                    slovarji_vonjav += vonjave
 
     
     # zapišemo CSV-je
-    orodja.zapisi_csv(slovarji_vin, slovarji_vin[0].keys(), 'obdealni_podatki/vina.csv')
+    orodja.zapisi_csv(slovarji_vin, slovarji_vin[0].keys(), 'obdelani_podatki/vina.csv')
     orodja.zapisi_csv(
         slovarji_detajlov, 
         ['id', 'regija', 'podregija', 'barva', 'alkohol', 'zamasek', 'opis', 'recenzija', 'popularnost'], 
-        'obdealni_podatki/detajli.csv')
-    orodja.zapisi_csv(slovarji_okusov, ['id', 'okus'], 'obdealni_podatki/okusi.csv')
-    orodja.zapisi_csv(slovarji_vonjav, ['id', 'vonj'], 'obdealni_podatki/vonjave.csv')
+        'obdelani_podatki/detajli.csv')
+    orodja.zapisi_csv(slovarji_okusov, ['id', 'okus'], 'obdelani_podatki/okusi.csv')
+    orodja.zapisi_csv(slovarji_vonjav, ['id', 'vonj'], 'obdelani_podatki/vonjave.csv')
 
 
 
