@@ -41,3 +41,14 @@ Podatki so urejeni v štiri `.csv` datoteke, ki jih dobimo, ko poženemo `zajemi
     opis, recenzija, popularnost 
 * `okusi.csv` vsebuje stolpca: id, okus
 * `vonjave.csv` vsebuje stolpca: id, vonj
+
+
+## Navodila
+Da podatke pridobimo, enostavno poženemo `zajemi.py`, ki generira vse štiri `.csv` 
+datoteke v mapi `obdelani_podatki`. 
+
+V mapi `zajete_strani` se nahajajo vnaprej shranjene `.html` datoteke, ki jih je 
+kar precej, zato priporočamo, da se shrani tudi ta mapa. Tako se doseže najvišja 
+konsistenca z analizo in najmanjši promet na spletni strani. 
+
+Analiza podatkov se nahaja v zvezku `vina.ipynb`.
