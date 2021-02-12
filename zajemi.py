@@ -52,6 +52,7 @@ vzorec_oglasa = re.compile(
     flags=re.DOTALL
 )
 
+
 # vzorec oglasa, ki predstavlja vino (gourmet in other spustimo)
 vzorec_vina = re.compile(
     r'<div id="product_id_(?P<id>\d{3,8}).*?'
