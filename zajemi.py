@@ -24,7 +24,7 @@ def zajemi_glavne(st_strani=99):
     return vina_url
 
 
-# naštimi to da ti da v tri folderje da github pobere
+
 def zajemi_posamezna(seznam_urljev):
     """
     Od zgornje funkcije prejme seznam vin in pobere njih posamezne strani. Hkrati 
@@ -107,6 +107,7 @@ def izloci_podatke_vina(oglas):
 
 
 
+# vzorec za detajle s strani posameznega vina
 vzorec_detajlov = re.compile(
     r'<meta property="og:url" content="https://winelibrary.com/wines.*?'
     r'<input type="hidden" name="product_id" value="(?P<id>\d{3,8})" />.*?'
@@ -114,7 +115,6 @@ vzorec_detajlov = re.compile(
     r"""Sub-Region.*?class="data"><a href=".*?">(?P<podregija>.*?)</a></td>.*?"""
     r"""Color.*?class="data"><a href=".*?">(?P<barva>.*?)</a></td>.*?"""
     r"""ABV.*?class="data">(?P<alkohol>.*?)%?</td>.*?"""
-    #r"""Varietal(s).*?class="data"><a href=".*?">(?P<varietal>.*?)</a>.*?""",
     r"""Closure.*?class="data">(?P<zamasek>.*?)</td>.*?""",
     flags=re.DOTALL
 )
@@ -134,7 +134,8 @@ vzorec_opisa = re.compile(
 
 def izloci_detajle(stran):
     """
-    Izloči vse relevantne podatke iz dejanske strani posameznega vina.
+    Izloči vse relevantne podatke iz dejanske strani posameznega vina in 
+    podatke malo olepša.
     """
     detajli = re.search(vzorec_detajlov, stran)
     if detajli:
@@ -189,7 +190,7 @@ def izloci_iz_seznama(vzorec, stran):
     """
     Za podatke o okusu in vonju, ki sta podana kot seznama izločimo in 
     shranimo posamezne kvalifikatorje. Vrne seznam slovarjev tipa 
-    id: kvalifikator 
+    {id: kvalifikator}. 
     """
     if vzorec == vzorec_okusov:
         kljuc = 'okus'
@@ -210,7 +211,6 @@ def izloci_iz_seznama(vzorec, stran):
                 }
             )
         return seznam
-
 
 
 
@@ -259,10 +259,3 @@ if __name__ == '__main__':
         'obdelani_podatki/detajli.csv')
     orodja.zapisi_csv(slovarji_okusov, ['id', 'okus'], 'obdelani_podatki/okusi.csv')
     orodja.zapisi_csv(slovarji_vonjav, ['id', 'vonj'], 'obdelani_podatki/vonjave.csv')
-
-
-
-
-
-# TODO: odloči se, če boš zajemal tudi other in gourmet
-# TODO: a bodo varietals zajeti
